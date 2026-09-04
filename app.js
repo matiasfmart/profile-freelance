@@ -41,7 +41,7 @@ document.addEventListener('scroll', updateProgress, { passive: true });
 updateProgress();
 
 const mobileCta = document.querySelector('[data-mobile-cta]');
-const intentLabels = { general: 'Contame que pasa', urgent: 'Resolver algo urgente', automation: 'Automatizar una tarea', system: 'Ver una solucion', discovery: 'Ver donde ahorrar tiempo' };
+const intentLabels = { general: 'Contame que pasa', urgent: 'Resolver algo urgente', automation: 'Automatizar una tarea', system: 'Ver una solucion', discovery: 'Buscar una mejora' };
 document.querySelectorAll('.wa-link').forEach((link) => {
   link.addEventListener('click', () => {
     const intent = link.dataset.intent || 'general';
