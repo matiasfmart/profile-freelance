@@ -104,15 +104,37 @@ if (processSection) {
 
 const navLinks = [...document.querySelectorAll('.site-header nav a')];
 const navigableSections = navLinks.map((link) => document.querySelector(link.hash)).filter(Boolean);
+const siteHeader = document.querySelector('.site-header');
+const menuToggle = document.querySelector('.menu-toggle');
+const closeMenu = () => {
+  siteHeader?.classList.remove('is-menu-open');
+  menuToggle?.setAttribute('aria-expanded', 'false');
+};
+const setActiveNav = (targetId) => {
+  navLinks.forEach((link) => {
+    const isActive = link.hash === `#${targetId}`;
+    link.classList.toggle('is-active', isActive);
+    if (isActive) link.setAttribute('aria-current', 'location');
+    else link.removeAttribute('aria-current');
+  });
+};
+menuToggle?.addEventListener('click', () => {
+  const willOpen = !siteHeader.classList.contains('is-menu-open');
+  siteHeader.classList.toggle('is-menu-open', willOpen);
+  menuToggle.setAttribute('aria-expanded', String(willOpen));
+});
+navLinks.forEach((link) => link.addEventListener('click', closeMenu));
+document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeMenu(); });
+document.addEventListener('pointerdown', (event) => { if (siteHeader?.classList.contains('is-menu-open') && !siteHeader.contains(event.target)) closeMenu(); });
 new IntersectionObserver((entries) => {
   const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
   if (!visible) return;
-  navLinks.forEach((link) => link.classList.toggle('is-active', link.hash === `#${visible.target.id}`));
+  setActiveNav(visible.target.id);
 }, { rootMargin: '-25% 0px -60% 0px', threshold: [0.1, 0.4] }).observe(navigableSections[0]);
 navigableSections.slice(1).forEach((section) => new IntersectionObserver((entries) => {
   const entry = entries[0];
   if (!entry.isIntersecting) return;
-  navLinks.forEach((link) => link.classList.toggle('is-active', link.hash === `#${entry.target.id}`));
+  setActiveNav(entry.target.id);
 }, { rootMargin: '-25% 0px -60% 0px', threshold: 0.1 }).observe(section));
 
 document.querySelectorAll('.project-actions a, .github-link').forEach((link) => {
